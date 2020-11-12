@@ -53,6 +53,13 @@ SELECT count(g_genre)
 FROM genre
 WHERE g_genre LIKE 'DRAMA';
 
+--#2.5
+SELECT m_title, m_year, g_genre
+FROM movies, genre
+WHERE m_moveid = g_movieid
+    AND g_genre LIKE 'DRAMA'
+ORDER BY m_title ASC;
+
 --#3
 SELECT a_actorid, a_name, a_dob
 FROM actor
@@ -136,19 +143,27 @@ WHERE m_moveid = app_miveid
 GROUP BY m_title;
 
 --#12
-SELECT m_title, m_year
+SELECT DISTINCT m_title, m_year
 FROM appears, actor, movies
 WHERE m_moveid = app_miveid	
     AND a_actorid = app_actorid
     AND app_role = 'actress'
 
---#13
+--#12.5
 SELECT count(*)
 FROM (SELECT DISTINCT m_title
 FROM appears, actor, movies
 WHERE m_moveid = app_miveid	
     AND a_actorid = app_actorid
     AND app_role = 'actress') AS movie;
+
+--#13
+
+SELECT DISTINCT m_title, m_year
+FROM appears, actor, movies
+WHERE m_moveid = app_miveid	
+    AND a_actorid = app_actorid
+    AND app_role = 'actor';
 
 --#14
 SELECT DISTINCT c_company, c_location
