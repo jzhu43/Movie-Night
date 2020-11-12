@@ -130,7 +130,7 @@ WHERE m_moveid = g_movieid
     AND g_genre LIKE 'DRAMA'
     AND m_year = 2005
 ORDER BY g_genre;
-
+ 
 --#11
 SELECT m_title, a_name, app_role, a_dob, c_company, d_name, g_genre, r_imdb
 FROM actor, appears, company, director, genre, movies, review
