@@ -1,44 +1,5 @@
--- -- CREATE TABLE Actor(
--- --     actorID varchar(50) primary key not null,
--- --     name varchar(50) not null,
--- --     dob date not null
--- -- );
-
--- -- CREATE TABLE Appears(
--- --     actorID varchar(50) primary key not null,
--- --     movieID varchar(50) not null,
--- --     role varchar(20) not null
--- -- );
-
--- -- CREATE TABLE Movie(
--- --     movieID varchar(50) primary key not null,
--- --     title varchar(60) not null,
--- --     year integer not null,
--- --     length float not null,
--- --     companyName varchar(40) not null,
--- --     director varchar(50) not null
--- -- );
-
--- -- CREATE TABLE Director(
--- --     dirID varchar(50) primary key not null,
--- --     dirName varchar(50) not null,
--- -- );
-
--- -- CREATE TABLE Genre(
--- --     movieID varchar(50) primary key not null,
--- --     genreType varchar(20) not null
--- -- );
-
--- -- CREATE TABLE Review(
--- --     movieID varchar(50) primary key not null,
--- --     imdb float not null,
--- --     rottent float not null
--- -- );
-
--- -- CREATE TABLE Company(
--- --     name varchar(40) primary key not null,
--- --     location varchar(80) not null
--- -- );
+-- Queries for database Phase 2 Project
+-- Created by Malia Bowman and Jason Zhu
 
 -- #1
 SELECT DISTINCT d_name
@@ -146,14 +107,6 @@ WHERE m_movieid = app_movieid
     AND a_actorid = app_actorid
     AND app_role = 'actress';
 
---#12.5
-SELECT count(*)
-FROM (SELECT DISTINCT m_title
-FROM appears, actor, movies
-WHERE m_movieid = app_movieid	
-    AND a_actorid = app_actorid
-    AND app_role = 'actress') AS movie;
-
 --#13
 SELECT count(*)
 FROM (SELECT DISTINCT m_title
@@ -226,6 +179,28 @@ from genre, movies, review
                         from genre
                         where  g_genre LIKE 'Romance')
 Order by m_title ASC;
+
+--#21
+select m_title, m_year, m_length
+from movies, director, production
+where d_name = p_dirname
+    and p_dirname = (select p_dirname
+                    from production
+                    where p_type LIKE 'picture'
+                        and p_dirname LIKE '%young%')
+    and d_name = m_director;
+
+
+--#22
+select m_title, m_length, p_actorid, p_aname, p_dirid, p_dirname, p_type
+from production, movies, actor, appears
+where p_type LIKE 'film'
+    and p_aname LIKE '%Griffith%'
+    and p_dirname LIKE '%Murnau%'
+    and a_actorid = p_actorid
+    and a_actorid = app_actorid
+    and app_movieid = m_movieid
+ORDER BY m_length ASC;
 
 
 --# Inserting into a table and the query to show it's located in the table
