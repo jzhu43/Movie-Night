@@ -224,3 +224,8 @@ UPDATE genre SET g_genre = 'Drama' where g_movieid = 'tt0';
 select g_movieid, g_genre
 from genre
 where g_movieid LIKE 'tt0';
+
+SELECT g_genre, m_title, m_year
+FROM genre, movies
+WHERE g_movieid = m_movieid
+    ;

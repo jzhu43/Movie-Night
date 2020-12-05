@@ -130,9 +130,15 @@ def search(_conn):
     
 
 def recommend(_conn):
+    #############################################################################
+    # when we demo:
+    #   actor: James Dean
+    #   genre: DRAMA
+    #############################################################################
+
     try:
         print("To receive better recommendation results, provide the following information:")
-        # print("NOTE: if you choose not to give a response for a question, enter 0")
+        print("Note: Based on your inputs, we will generate different recommendations. Please, be patient as this might take some time! :)")
 
         director = raw_input("The director: ")
         actor = raw_input("The actor: ")
@@ -140,12 +146,11 @@ def recommend(_conn):
         year = raw_input("The year: ")
         length = raw_input("The length of the movie: ")
         genre = raw_input("The genre of the movie: ")
+        genre_2 = raw_input("Another genre of the movie: ")
         review = raw_input("The review score (1-10) of the movie: ")
         production = raw_input("The production of the movie: ")
         company = raw_input("The company of the movie: ")
-        
-        print("Thank you! Based on your inputs, we will generate different recommendations. Please, be patient as this might take some time! :)")
-
+       
         # if len(director) == 0:
         #     print("Empty")
         # if len(actor) == 0:
@@ -165,7 +170,55 @@ def recommend(_conn):
         # if len(company) == 0:
         #     print("Empty")
         
-        print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        l = ("\nTitle | Year | Genre:")
+        sql = """SELECT m_title, m_year, g_genre
+                FROM movies, genre
+                WHERE m_movieid = g_movieid
+                    AND g_genre LIKE ?
+                ORDER BY m_title ASC;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (genre,))
+        rows = cur.fetchall()
+        if len(genre) != 0:
+            print(l)
+            for row in rows:
+                    l = (row[0], row[1], row[2])
+                    print(l)
+        l = ("\nTitle | Year | Actor | Actor Date of Birth:")
+        sql = """SELECT m_title, m_year, a_name, a_dob
+                FROM actor, movies, appears
+                WHERE m_movieid = app_movieid
+                AND a_actorid = app_actorid
+                AND a_name LIKE ? """
+        cur = _conn.cursor()
+        cur.execute(sql, (actor,))
+        rows = cur.fetchall()
+        if len(actor) != 0:
+            print(l)
+            for row in rows:
+                    l = (row[0], row[1], row[2], row[3])
+                    print(l)
+
+        if len(actor) != 0 and len(genre) != 0:
+            l = ("\nTitle | Year | Genre | Actor | Actor Date of Birth:")
+            sql = """SELECT m_title, m_year, g_genre, a_name, a_dob
+                    FROM actor, movies, appears, genre
+                    WHERE m_movieid = app_movieid
+                    AND a_actorid = app_actorid
+                    AND m_movieid = g_movieid
+                    AND a_name LIKE ? 
+                    AND g_genre LIKE ?
+                ORDER BY m_title ASC;"""
+            cur = _conn.cursor()
+            cur.execute(sql, (actor, genre,))
+            rows = cur.fetchall()
+            if len(rows) != 0: ####### if there are any tuples that have the actor and the genre we inputed, it will print the info
+                print(l)
+                for row in rows:
+                            l = (row[0], row[1], row[2], row[3], row[4])
+                            print(l)
+            
+        print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
         answer = input()
         if answer == 0:
             exit()    
@@ -213,6 +266,7 @@ def main():
     print("1. Search for a movie")
     print("2. Receive a recommendation based on your interests")
     print("3. Modify the movie system's information")
+    print("4. Leave Movie Night")
     print("Enter the number of what you would like to do: ")
 
     answer = input()
@@ -227,8 +281,10 @@ def main():
             search(conn)
         if answer == 2:
             recommend(conn)
-        if answer ==3:
+        if answer == 3:
             modify(conn)
+        if answer == 4:
+            exit()
 
     closeConnection(conn, database)
 
