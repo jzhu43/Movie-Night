@@ -57,7 +57,7 @@ def search(_conn):
         
         if len(rows) == 0:
             print("The movie does not exist in the Movie Night system :(")
-            exit()
+            main()
         else:
             l = ("Title | Year | Length | Director | Company of Movie")
             print(l)
@@ -104,44 +104,133 @@ def search(_conn):
         cur = _conn.cursor()
         cur.execute(sql, (movie, year,))
         rows = cur.fetchall()
-        l = ("Genre: ")
-        print(l)
-        for row in rows:
-                print('|'.join([str(r) for r in row]) + "\n")
+        if len(rows) != 0:
+            l = ("Genre: ")
+            print(l)
+            for row in rows:
+                    print('|'.join([str(r) for r in row]) + "\n")
 
+        print("Would you like to search again (Enter 1) -or- receive a recommendation (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        answer = input()
+        if answer == 0:
+            exit()    
+        if answer == 1:
+            # print("YES")
+            search(_conn)
+        if answer == 2:
+            # print("YES")
+            recommend(_conn)
+        if answer == 3:
+            # print("YES")
+            modify(_conn)
+        
     except Error as e:        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")     
     
 
 def recommend(_conn):
-    int
+    try:
+        print("To receive better recommendation results, provide the following information:")
+        # print("NOTE: if you choose not to give a response for a question, enter 0")
+
+        director = raw_input("The director: ")
+        actor = raw_input("The actor: ")
+        role = raw_input("The role of the actor: ")
+        year = raw_input("The year: ")
+        length = raw_input("The length of the movie: ")
+        genre = raw_input("The genre of the movie: ")
+        review = raw_input("The review score (1-10) of the movie: ")
+        production = raw_input("The production of the movie: ")
+        company = raw_input("The company of the movie: ")
+        
+        print("Thank you! Based on your inputs, we will generate different recommendations. Please, be patient as this might take some time! :)")
+
+        # if len(director) == 0:
+        #     print("Empty")
+        # if len(actor) == 0:
+        #     print("Empty")
+        # if len(role) == 0:
+        #     print("Empty")
+        # if len(year) == 0:
+        #     print("Empty")
+        # if len(length) == 0:
+        #     print("Empty")
+        # if len(genre) == 0:
+        #     print("Empty")
+        # if len(review) == 0:
+        #     print("Empty")
+        # if len(production) == 0:
+        #     print("Empty")
+        # if len(company) == 0:
+        #     print("Empty")
+        
+        print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        answer = input()
+        if answer == 0:
+            exit()    
+        if answer == 1:
+            # print("YES")
+            search(_conn)
+        if answer == 2:
+            # print("YES")
+            recommend(_conn)
+        if answer == 3:
+            # print("YES")
+            modify(_conn)
+        
+    except Error as e:        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")   
 
 def modify(_conn):
-    int
+    try:
+        # print("IN modify function")
+        print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        answer = input()
+        if answer == 0:
+            exit()    
+        if answer == 1:
+            # print("YES")
+            search(_conn)
+        if answer == 2:
+            # print("YES")
+            recommend(_conn)
+        if answer == 3:
+            # print("YES")
+            modify(_conn)
+    except Error as e:        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
 
 def main():
-   database = r"moviesdata.db"
+    database = r"moviesdata.db"
 
-   # create a database connection
-   conn = openConnection(database)
-   
-   print("\nHello, welcome to Movie Night! What would you like to do?")
-   print("\n1. Search for a movie")
-   print("\n2. Receive a recommendation based on your interests")
-   print("\n3. Modify the movie system's information")
-   print("\nEnter the number of what you would like to do: ")
+    # create a database connection
+    conn = openConnection(database)
 
-   answer = input()
-   with conn:
-    if answer == 1:
-        search(conn)
-    if answer == 2:
-        recommend(conn)
-    if answer ==3:
-        modify(conn)
+    print("Hello, welcome to Movie Night! What would you like to do?")
+    print("1. Search for a movie")
+    print("2. Receive a recommendation based on your interests")
+    print("3. Modify the movie system's information")
+    print("Enter the number of what you would like to do: ")
 
-   closeConnection(conn, database)
+    answer = input()
+    # try:
+    #    ans = int(answer)
+    # except ValueError:
+    #     print("Input is not a number.")
+    #     main()
+
+    with conn:
+        if answer == 1:
+            search(conn)
+        if answer == 2:
+            recommend(conn)
+        if answer ==3:
+            modify(conn)
+
+    closeConnection(conn, database)
 
 
 if __name__ == '__main__':
