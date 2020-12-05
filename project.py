@@ -134,6 +134,9 @@ def recommend(_conn):
     # when we demo:
     #   actor: James Dean
     #   genre: DRAMA
+    #   genre_2: ACTION
+    #   year: 2005
+    #   director: D.W. Griffith
     #############################################################################
 
     try:
@@ -170,6 +173,7 @@ def recommend(_conn):
         # if len(company) == 0:
         #     print("Empty")
         
+        #USED GENRE
         l = ("\nTitle | Year | Genre:")
         sql = """SELECT m_title, m_year, g_genre
                 FROM movies, genre
@@ -184,6 +188,8 @@ def recommend(_conn):
             for row in rows:
                     l = (row[0], row[1], row[2])
                     print(l)
+
+        #USED ACTOR
         l = ("\nTitle | Year | Actor | Actor Date of Birth:")
         sql = """SELECT m_title, m_year, a_name, a_dob
                 FROM actor, movies, appears
@@ -199,6 +205,7 @@ def recommend(_conn):
                     l = (row[0], row[1], row[2], row[3])
                     print(l)
 
+        #USED ACTOR AND GENRE
         if len(actor) != 0 and len(genre) != 0:
             l = ("\nTitle | Year | Genre | Actor | Actor Date of Birth:")
             sql = """SELECT m_title, m_year, g_genre, a_name, a_dob
@@ -217,6 +224,63 @@ def recommend(_conn):
                 for row in rows:
                             l = (row[0], row[1], row[2], row[3], row[4])
                             print(l)
+        
+        #USED GENRE AND YEAR
+        if len(genre) != 0 and len(genre_2) != 0 and len(year) != 0:
+            l = ("\nTitle | Year | Genre | Length:")
+            sql = """SELECT m_title, m_year, g_genre, m_length
+                    FROM movies, genre
+                    WHERE m_movieid = g_movieid
+                        AND g_genre LIKE ?
+                        AND m_year = ?
+                    UNION 
+                    SELECT m_title, m_year, g_genre, m_length
+                    FROM movies, genre
+                    WHERE m_movieid = g_movieid
+                        AND g_genre LIKE ?
+                        AND m_year = ?
+                    ORDER BY g_genre;"""
+            cur = _conn.cursor()
+            cur.execute(sql, (genre, year, genre_2, year,))
+            rows = cur.fetchall()
+            if len(rows) != 0:
+                print(l)
+                for row in rows:
+                        l = (row[0], row[1], row[2], row[3])
+                        print(l)
+
+        #USED DIRECTOR
+        l = ("\nTitle | Year | Director:")
+        sql = """SELECT m_title, m_year, d_name
+                FROM director, movies
+                WHERE d_name = m_director
+                    AND d_name = ?
+                GROUP BY m_title;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (director,))
+        rows = cur.fetchall()
+        if len(rows) != 0:
+            print(l)
+            for row in rows:
+                    l = (row[0], row[1], row[2])
+                    print(l)
+
+        #USED YEAR
+        l = ("\nTitle | Year | Actor | Director")
+        sql = """SELECT distinct m_title, m_year, a_name, d_name
+                from director, movies, actor
+                where d_name = a_name
+                    and m_director = d_name
+                    and m_year < ?
+                GROUP BY a_name;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (year,))
+        rows = cur.fetchall()
+        if len(rows) != 0:
+            print(l)
+            for row in rows:
+                    l = (row[0], row[1], row[2], row[3])
+                    print(l)
             
         print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
         answer = input()
