@@ -229,3 +229,27 @@ SELECT g_genre, m_title, m_year
 FROM genre, movies
 WHERE g_movieid = m_movieid
     ;
+
+SELECT d_dirid
+from director
+where d_dirid LIKE 'nm_________'
+--==TESTING INSERT FUNCTIONS=======================================================
+SELECT * FROM movies WHERE m_title = "Malia";
+    DELETE FROM movies WHERE m_title = "Malia";
+
+SELECT * FROM actor WHERE a_name =  "Malia B";
+    DELETE FROM actor WHERE a_name =  "Malia B";
+
+SELECT * FROM director WHERE d_name = "Malia B";
+    DELETE FROM director WHERE d_name = "Malia B";
+
+SELECT * FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
+    DELETE FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
+
+SELECT * FROM company WHERE c_company LIKE 'Malia';
+    DELETE FROM company WHERE c_company LIKE 'Malia';
+
+SELECT * FROM review WHERE r_movieid = 'tt1';
+    DELETE FROM review WHERE r_movieid = 'tt1';
+
+

@@ -110,9 +110,9 @@ def search(_conn):
             for row in rows:
                     print('|'.join([str(r) for r in row]) + "\n")
 
-        print("Would you like to search again (Enter 1) -or- receive a recommendation (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        print("Would you like to search again (Enter 1) -or- receive a recommendation (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
         answer = input()
-        if answer == 0:
+        if answer == 4:
             exit()    
         if answer == 1:
             # print("YES")
@@ -620,7 +620,7 @@ def recommend(_conn):
                 for row in rows:
                         l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
                         print(l)
-        # USED PRODUCTION AND DIRECTOR
+        # USED PRODUCTION AND DIRECTOR              ones that worked: 
         if((not genre) and len(director) != 0 and (not actor) and (not role) and (not year) and (not length) and (not review) and len(production) != 0 and (not company)):
             l = ("\nTtile | Year | Length | Director")
             sql = """select m_title, m_year, m_length, d_name
@@ -644,6 +644,7 @@ def recommend(_conn):
         # USED PRODUCTION & ACTOR & DIRECTOR
         if((not genre) and len(director) != 0 and len(actor) != 0 and (not role) and (not year) and (not length) and (not review) and len(production) != 0 and (not company)):
             l = ("\n")
+            ######### ^ come back to this line later
             sql = """select m_title, m_length, m_year, p_aname, p_dirname, p_type
                     from production, movies, actor, appears
                     where p_type LIKE ?
@@ -686,9 +687,9 @@ def recommend(_conn):
                         l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
                         print(l)
 
-        print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
         answer = input()
-        if answer == 0:
+        if answer == 4:
             exit()    
         if answer == 1:
             # print("YES")
@@ -703,47 +704,247 @@ def recommend(_conn):
     except Error as e:        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")   
+####### INSERT FUNCTIONS ######################################################################################################################################
+def insert_movies(_conn):
+    try:
+        t = raw_input("Enter the movie title:")
+        id = raw_input("Enter the movie ID in this format -> tt# :")
+        y = input("Enter the movie year:")
+        l = input("Enter the movie length (in total minutes):")
+        d = raw_input("Enter the movie director:")
+        c = raw_input("Enter the movie company:")
+        
+        sql = """INSERT INTO movies VALUES (?, ?, ?, ?, ?, ?)"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, t, y, l, d, c,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def insert_actor(_conn):
+    try:
+        n = raw_input("Enter actor's first name and last name: ")
+        id = raw_input("Enter the actor's ID in this format -> nm#########: ")
+        dob = raw_input("Enter actor's date of birth in this format -> mm/dd/yyyy: ")
+        
+        sql = """INSERT INTO actor VALUES (?, ?, ?)"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, n, dob,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def insert_director(_conn):
+    try:
+        n = raw_input("Enter director's first name and last name: ")
+        id = raw_input("Enter the director's ID in this format -> nm#########: ")
+
+        sql = """INSERT INTO director VALUES (?, ?)"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, n,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def insert_genre(_conn):
+    try:
+        g = raw_input("Enter the movie's genre: ")
+        id = raw_input("Enter the movie ID in this format -> tt# : ")
+
+        sql = """INSERT INTO genre VALUES (?, ?)"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, g,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def insert_review(_conn):
+    try:
+        id = raw_input("Enter the movie ID in this format -> tt# : ")
+        imdb = input("Enter the movie's IMDB review: ")
+        rt = input("Enter the movie's IMDB review:")
+
+        sql = """INSERT INTO review VALUES (?, ?, ?)"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, imdb, rt,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def insert_company(_conn):
+    try:
+        c = raw_input("Enter the company name: ")
+        lo = raw_input("Enter the company's location in this format -> 2#### : ")
+
+        sql = """INSERT INTO company VALUES (?, ?)"""
+        cur = _conn.cursor()
+        args = [c, lo]
+        cur.execute(sql, args)
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_movies(_conn):
+    try:
+        t = raw_input("Enter the movie title:")
+        id = raw_input("Enter the movie ID in this format -> tt[integer value] :")
+        y = input("Enter the movie year:")
+        l = input("Enter the movie length (in total minutes):")
+        d = raw_input("Enter the movie director:")
+        c = raw_input("Enter the movie company:")
+        
+        sql = """DELETE FROM movies WHERE m_movieid = ?
+                                        AND m_title = ?
+                                        AND m_year = ?
+                                        AND m_length = ?
+                                        AND m_director = ?
+                                        AND m_company = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, t, y, l, d, c,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_actor(_conn):
+    try:
+        n = raw_input("Enter actor's first name and last name: ")
+        id = raw_input("Enter the actor's ID in this format -> nm[integer value]: ")
+        dob = raw_input("Enter actor's date of birth: ")
+        
+        sql = """DELETE FROM actor WHERE a_actorid = ? AND a_name = ? AND a_dob = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, n, dob,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_director(_conn):
+    try:
+        n = raw_input("Enter director's first name and last name: ")
+        id = raw_input("Enter the director's ID in this format -> nm#########: ")
+
+        sql = """DELETE FROM director WHERE d_dirid = ? AND d_name = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, n,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_genre(_conn):
+    try:
+        g = raw_input("Enter the movie's genre: ")
+        id = raw_input("Enter the movie ID in this format -> tt# : ")
+
+        sql = """DELETE FROM genre WHERE g_movieid = ? AND g_genre = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, g,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_review(_conn):
+    try:
+        id = raw_input("Enter the movie ID in this format: ")
+        imdb = input("Enter the movie's IMDB review: ")
+        rt = input("Enter the movie's IMDB review:")
+
+        sql = """DELETE FROM review WHERE r_movieid = ? AND r_imdb = ? AND r_rottent = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id, imdb, rt,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+
+def delete_company(_conn):
+    try:
+        c = raw_input("Enter the company name: ")
+        lo = raw_input("Enter the company's location: ")
+
+        sql = """DELETE FROM company WHERE c_company = ? AND c_location = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (c, lo,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
 
 def modify(_conn):
     try:
         # print("IN modify function")
-
         print("Thank you for modifying the Movie Night so it is an up-to-date catalog! :)")
-        
         print("Would you like to INSERT data (Enter 1) -or DELETE data (Enter 2) -or- UPDATE data (Enter 3)?:")
         ans = input()
-        if ans == 1:
-            print("What information do you want to insert?" + "\n" + "1. Movie" + "\n" + "2. Actor" + "\n" + "3. Director" + "\n" + "4. Genre" + "\n" + "5. Review" + "\n" + "6. Company")
+        if ans == 1: #INSERT
+            print("What information do you want to INSERT?" + "\n" + "1. Movie" + "\n" + "2. Actor" + "\n" + "3. Director" + "\n" + "4. Genre" + "\n" + "5. Review" + "\n" + "6. Company")
             insert = input()
-            if insert == 1:
-                print("Enter the movie title:")
-                t = raw_input()
-                ## how do we want to handle the movie ID?
-                print("Enter the movie ID:")
-                id = input() 
-                print("Enter the movie year:")
-                y = input()
-                print("Enter the movie length (in total minutes):")
-                l = input()
-                print("Enter the movie director:")
-                d = raw_input()
-                print("Enter the movie company:")
-                c = raw_input()
-
-                sql = """INSERT INTO movies VALUES (?, ?, ?, ?, ?, ?)"""
-                cur = _conn.cursor()
-                cur.execute(sql, id, t, y, l, d, c)
-            if insert == 2:
-                int =0
-
-        if ans == 2:
-            int = 0
-        if ans == 3:
+            if insert == 1: #MOVIES
+                insert_movies(_conn)
+            if insert == 2: #ACTOR
+                insert_actor(_conn)
+            if insert == 3: #DIRECTOR
+                insert_director(_conn)
+            if insert == 4: # GENRE
+                insert_genre(_conn)
+            if insert == 5: # REVIEW
+                insert_review(_conn)
+            if insert == 6: # COMPANY
+                insert_company(_conn)
+        if ans == 2: #DELETE
+            print("What information do you want to DELETE?" + "\n" + "1. Movie" + "\n" + "2. Actor" + "\n" + "3. Director" + "\n" + "4. Genre" + "\n" + "5. Review" + "\n" + "6. Company")
+            delete = input()
+            if delete == 1: #MOVIES
+                delete_movies(_conn)
+            if delete == 2: #ACTOR
+                delete_actor(_conn)
+            if delete == 3: #DIRECTOR
+                delete_director(_conn)
+            if delete == 4: # GENRE
+                delete_genre(_conn)
+            if delete == 5: # REVIEW
+                delete_review(_conn)
+            if delete == 6: # COMPANY
+                delete_company(_conn)
+        if ans == 3: #UPDATE
             int =0
 
-        print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 0)?:")
+        print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
         answer = input()
-        if answer == 0:
+        if answer == 4:
             exit()    
         if answer == 1:
             # print("YES")
@@ -770,7 +971,6 @@ def main():
     print("3. Modify the movie system's information")
     print("4. Leave Movie Night")
     print("Enter the number of what you would like to do: ")
-
     answer = input()
     # try:
     #    ans = int(answer)
