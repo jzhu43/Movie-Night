@@ -218,9 +218,13 @@ where g_movieid LIKE 'tt0';
 DELETE FROM review where r_movieid LIKE 'tt0';
 
 DELETE FROM genre where g_movieid LIKE 'tt0';
+DELETE FROM genre where g_movieid LIKE 'tt1';
 
 --# Updating an existing tuple in the table with the specified conditions
-UPDATE genre SET g_genre = 'Drama' where g_movieid = 'tt0';
+SELECT * FROM genre where g_movieid LIKE 'tt0';
+SELECT * FROM genre where g_movieid LIKE 'tt1';
+
+UPDATE genre SET g_genre = 'Drama', g_movieid = 'tt1' where g_movieid = 'tt0';
 select g_movieid, g_genre
 from genre
 where g_movieid LIKE 'tt0';
@@ -235,21 +239,28 @@ from director
 where d_dirid LIKE 'nm_________'
 --==TESTING INSERT FUNCTIONS=======================================================
 SELECT * FROM movies WHERE m_title = "Malia";
+SELECT * FROM movies WHERE m_title = "Jason";
+
     DELETE FROM movies WHERE m_title = "Malia";
 
 SELECT * FROM actor WHERE a_name =  "Malia B";
+SELECT * FROM actor WHERE a_name =  "Jason Z";
     DELETE FROM actor WHERE a_name =  "Malia B";
 
 SELECT * FROM director WHERE d_name = "Malia B";
+SELECT * FROM director WHERE d_name = "Jason Z";
     DELETE FROM director WHERE d_name = "Malia B";
 
 SELECT * FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
+SELECT * FROM genre WHERE g_movieid = 'tt4';
     DELETE FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
 
-SELECT * FROM company WHERE c_company LIKE 'Malia';
-    DELETE FROM company WHERE c_company LIKE 'Malia';
-
 SELECT * FROM review WHERE r_movieid = 'tt1';
+SELECT * FROM review WHERE r_movieid = 'tt8';
+
     DELETE FROM review WHERE r_movieid = 'tt1';
 
+SELECT * FROM company WHERE c_company LIKE 'Malia';
+SELECT * FROM company WHERE c_company LIKE 'Jason';
 
+    DELETE FROM company WHERE c_company LIKE 'Malia';

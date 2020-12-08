@@ -16,20 +16,19 @@ import random
 
 
 def openConnection(_dbFile):
-    print("++++++++++++++++++++++++++++++++++")
-    print("Open database: ", _dbFile)
+    #print("++++++++++++++++++++++++++++++++++")
+    #print("Open database: ", _dbFile)
 
     conn = None
     try:
         conn = sqlite3.connect(_dbFile)
-        print("success")
+        #print("success")
     except Error as e:
         print(e)
 
-    print("++++++++++++++++++++++++++++++++++")
+    #print("++++++++++++++++++++++++++++++++++")
 
     return conn
-
 
 def closeConnection(_conn, _dbFile):
     print("++++++++++++++++++++++++++++++++++")
@@ -42,6 +41,7 @@ def closeConnection(_conn, _dbFile):
         print(e)
 
     print("++++++++++++++++++++++++++++++++++")
+####### SEARCH FUNCTION ######################################################################################################################################
 def search(_conn):
     print("\nLet's search for your movie!") 
     # movie = raw_input("\nWhat movie do you want to search for? The system will give you information about the movie. Enter the name: ")
@@ -127,8 +127,7 @@ def search(_conn):
     except Error as e:        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")     
-    
-
+####### RECOMMEND FUNCTION ######################################################################################################################################
 def recommend(_conn):
     #############################################################################
     # when we demo:
@@ -579,10 +578,11 @@ def recommend(_conn):
                         and a_name = ?
                         and app_role = ?
                         and g_genre = ?
-                        and r_review = ?
+                        and r_imdb >= ?
+                        and r_rottent >= ?
                     ORDER BY m_title, m_year, a_name, d_name;"""
             cur = _conn.cursor()
-            cur.execute(sql, (year, director, actor, role, genre, review,))
+            cur.execute(sql, (year, director, actor, role, genre, review, review,))
             rows = cur.fetchall()
             if len(rows) != 0:
                 print(l)
@@ -607,13 +607,14 @@ def recommend(_conn):
                         and a_name = ?
                         and app_role = ?
                         and g_genre = ?
-                        and r_review = ?
+                        and r_imdb >= ?
+                        and r_rottent >= ?
                         and m_length = ?
                         and p_type = ?
                         and c_company = ?
                     ORDER BY m_title, m_year, a_name, d_name;"""
             cur = _conn.cursor()
-            cur.execute(sql, (year, director, actor, role, genre, review, length, production, company,))
+            cur.execute(sql, (year, director, actor, role, genre, review, review, length, production, company,))
             rows = cur.fetchall()
             if len(rows) != 0:
                 print(l)
@@ -723,7 +724,6 @@ def insert_movies(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def insert_actor(_conn):
     try:
         n = raw_input("Enter actor's first name and last name: ")
@@ -739,7 +739,6 @@ def insert_actor(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def insert_director(_conn):
     try:
         n = raw_input("Enter director's first name and last name: ")
@@ -754,7 +753,6 @@ def insert_director(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def insert_genre(_conn):
     try:
         g = raw_input("Enter the movie's genre: ")
@@ -769,7 +767,6 @@ def insert_genre(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def insert_review(_conn):
     try:
         id = raw_input("Enter the movie ID in this format -> tt# : ")
@@ -785,7 +782,6 @@ def insert_review(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def insert_company(_conn):
     try:
         c = raw_input("Enter the company name: ")
@@ -801,7 +797,7 @@ def insert_company(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
+####### DELETE FUNCTIONS ######################################################################################################################################
 def delete_movies(_conn):
     try:
         t = raw_input("Enter the movie title:")
@@ -825,7 +821,6 @@ def delete_movies(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def delete_actor(_conn):
     try:
         n = raw_input("Enter actor's first name and last name: ")
@@ -841,7 +836,6 @@ def delete_actor(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def delete_director(_conn):
     try:
         n = raw_input("Enter director's first name and last name: ")
@@ -856,7 +850,6 @@ def delete_director(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def delete_genre(_conn):
     try:
         g = raw_input("Enter the movie's genre: ")
@@ -871,7 +864,6 @@ def delete_genre(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def delete_review(_conn):
     try:
         id = raw_input("Enter the movie ID in this format: ")
@@ -887,7 +879,6 @@ def delete_review(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
-
 def delete_company(_conn):
     try:
         c = raw_input("Enter the company name: ")
@@ -902,7 +893,134 @@ def delete_company(_conn):
         _conn.rollback()        
         print(e)    
         print("++++++++++++++++++++++++++++++++++")
+####### UPDATE FUNCTIONS ######################################################################################################################################
+def update_movies(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        t = raw_input("Enter the movie title:")
+        id = raw_input("Enter the movie ID in this format -> tt[integer value] :")
+        y = input("Enter the movie year:")
+        l = input("Enter the movie length (in total minutes):")
+        d = raw_input("Enter the movie director:")
+        c = raw_input("Enter the movie company:")
+        print("What would you like to UPDATE the ABOVE information to?")
+        t_1= raw_input("Enter the movie title:")
+        id_1 = raw_input("Enter the movie ID in this format -> tt[integer value] :")
+        y_1 = input("Enter the movie year:")
+        l_1 = input("Enter the movie length (in total minutes):")
+        d_1 = raw_input("Enter the movie director:")
+        c_1 = raw_input("Enter the movie company:")
 
+        sql = """UPDATE movies SET m_movieid = ?, m_title = ?, m_year = ?, m_length = ?, m_director = ?, m_company = ?
+                                WHERE m_movieid = ? AND m_title = ? AND m_year = ? AND m_length = ? AND m_director = ? AND m_company = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id_1, t_1, y_1, l_1, d_1, c_1, id, t, y, l, d, c,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+def update_actor(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        n = raw_input("Enter actor's first name and last name: ")
+        id = raw_input("Enter the actor's ID in this format -> nm[integer value]: ")
+        dob = raw_input("Enter actor's date of birth: ")
+        print("What would you like to UPDATE the ABOVE information to?")
+        n_1 = raw_input("Enter actor's first name and last name: ")
+        id_1 = raw_input("Enter the actor's ID in this format -> nm[integer value]: ")
+        dob_1 = raw_input("Enter actor's date of birth: ")
+
+        sql = """UPDATE actor SET a_actorid = ?, a_name = ?, a_dob = ? 
+                                WHERE a_actorid = ? AND a_name = ? AND a_dob = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id_1, n_1, dob_1, id, n, dob,))
+        _conn.commit()
+        print("success")    
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+def update_director(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        n = raw_input("Enter director's first name and last name: ")
+        id = raw_input("Enter the director's ID in this format -> nm#########: ")
+        print("What would you like to UPDATE the ABOVE information to?")
+        n_1 = raw_input("Enter director's first name and last name: ")
+        id_1 = raw_input("Enter the director's ID in this format -> nm#########: ")
+
+        sql = """UPDATE director SET d_dirid = ?, d_name = ? 
+                                WHERE d_dirid = ? AND d_name = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id_1, n_1, id, n,))
+        _conn.commit()
+        print("success") 
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+def update_genre(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        g = raw_input("Enter the movie's genre: ")
+        id = raw_input("Enter the movie ID in this format -> tt# : ")
+        print("What would you like to UPDATE the ABOVE information to?")
+        g_1 = raw_input("Enter the movie's genre: ")
+        id_1 = raw_input("Enter the movie ID in this format -> tt# : ")
+
+        sql = """UPDATE genre SET g_movieid = ?, g_genre = ? 
+                                WHERE g_movieid = ? AND g_genre = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id_1, g_1, id, g,))
+        _conn.commit()
+        print("success") 
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+def update_review(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        id = raw_input("Enter the movie ID in this format: ")
+        imdb = input("Enter the movie's IMDB review: ")
+        rt = input("Enter the movie's IMDB review:")
+        print("What would you like to UPDATE the ABOVE information to?")
+        id_1 = raw_input("Enter the movie ID in this format: ")
+        imdb_1 = input("Enter the movie's IMDB review: ")
+        rt_1 = input("Enter the movie's IMDB review:")
+
+        sql = """UPDATE review SET r_movieid = ?, r_imdb = ?, r_rottent = ?
+                                WHERE r_movieid = ? AND r_imdb = ? AND r_rottent = ? ;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (id_1, imdb_1, rt_1, id, imdb, rt,))
+        _conn.commit()
+        print("success")
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+def update_company(_conn):
+    try:
+        print("What would you like to UPDATE? ")
+        c = raw_input("Enter the company name: ")
+        lo = raw_input("Enter the company's location: ")
+        print("What would you like to UPDATE the ABOVE information to?")
+        c_1 = raw_input("Enter the company name: ")
+        lo_1 = raw_input("Enter the company's location: ")
+        
+        sql = """UPDATE company SET c_company = ?, c_location = ?
+                                    WHERE c_company = ? AND c_location = ?;"""
+        cur = _conn.cursor()
+        cur.execute(sql, (c_1, lo_1, c, lo,))
+        _conn.commit()
+        print("success")
+    except Error as e:        
+        _conn.rollback()        
+        print(e)    
+        print("++++++++++++++++++++++++++++++++++")
+####### MODIFY FUNCTION ######################################################################################################################################
 def modify(_conn):
     try:
         # print("IN modify function")
@@ -940,7 +1058,20 @@ def modify(_conn):
             if delete == 6: # COMPANY
                 delete_company(_conn)
         if ans == 3: #UPDATE
-            int =0
+            print("What information do you want to UPDATE?" + "\n" + "1. Movie" + "\n" + "2. Actor" + "\n" + "3. Director" + "\n" + "4. Genre" + "\n" + "5. Review" + "\n" + "6. Company")
+            update = input()
+            if update == 1: #MOVIES
+                update_movies(_conn)
+            if update == 2: #ACTOR
+                update_actor(_conn)
+            if update == 3: #DIRECTOR
+                update_director(_conn)
+            if update == 4: # GENRE
+                update_genre(_conn)
+            if update == 5: # REVIEW
+                update_review(_conn)
+            if update == 6: # COMPANY
+                update_company(_conn)
 
         print("Would you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
         answer = input()
@@ -989,7 +1120,6 @@ def main():
             exit()
 
     closeConnection(conn, database)
-
 
 if __name__ == '__main__':
     main()
