@@ -151,7 +151,8 @@ def recommend(_conn):
         # length_l = raw_input("The largest length of the movie: ")
         # length_s = raw_input("The smallest length of the movie: ")
         genre = raw_input("The genre of the movie: ")
-        genre_2 = raw_input("Another genre of the movie: ")
+        if len(genre) != 0:
+            genre_2 = raw_input("Another genre of the movie: ")
         review = raw_input("The lowest review score (1-10) of the movie you would want: ")
         production = raw_input("The production of the movie: ")
         company = raw_input("The company of the movie: ")
@@ -560,7 +561,8 @@ def recommend(_conn):
                         print(l)
         # USED YEAR & DIRECTOR & ACTOR & ROLE & GENRE & REVIEW
         if len(year) != 0 and len(director) != 0 and len(actor) != 0 and len(role) != 0 and len(genre) != 0 and len(review) != 0:
-            sql = """SELECT m_title, m_year, a_name, app_role, a_dob, c_company, d_name, g_genre, r_imdb, r_rottent
+            l = ("\nTitle | Year | Actor | Actor Date of Birth | Actor Role | Director | Movie Company | Genre | Review IMDB | Review Rotten Toamtoes ")
+            sql = """SELECT m_title, m_year, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent
                     from actor, movies, appears, company, director, genre, review
                     where m_movieid = app_movieid
                         and app_actorid = a_actorid
@@ -573,7 +575,7 @@ def recommend(_conn):
                         and a_name = ?
                         and app_role = ?
                         and g_genre = ?
-                        and review = ?
+                        and r_review = ?
                     ORDER BY m_title, m_year, a_name, d_name;"""
             cur = _conn.cursor()
             cur.execute(sql, (year, director, actor, role, genre, review,))
@@ -582,6 +584,37 @@ def recommend(_conn):
                 print(l)
                 for row in rows:
                         l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
+                        print(l)
+        ##USED YEAR & DIRECTOR & ACTOR & ROLE & GENRE & REVIEW & LENGTH & PRODUCTION & COMPANY
+        if len(year) != 0 and len(director) != 0 and len(actor) != 0 and len(role) != 0 and len(genre) != 0 and len(review) != 0 and len(length) != 0 and len(production) != 0 and len(company) != 0:
+            l = ("\nTitle | Year | Movie Length | Actor | Actor Date of Birth | Actor Role | Director | Movie Company | Genre | Review IMDB | Review Rotten Toamtoes | Production")            
+            sql = """SELECT m_title, m_year, m_length, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent, p_type
+                    from actor, movies, appears, company, director, genre, review
+                    where m_movieid = app_movieid
+                        and app_actorid = a_actorid
+                        and m_company = c_company
+                        and m_director = d_name
+                        and m_movieid = g_movieid
+                        and m_movieid = r_movieid
+                        and p_dirid = d_dirid
+                        and p_actorid = a_actorid
+                        and m_year = ?
+                        and d_name = ?
+                        and a_name = ?
+                        and app_role = ?
+                        and g_genre = ?
+                        and r_review = ?
+                        and m_length = ?
+                        and p_type = ?
+                        and c_company = ?
+                    ORDER BY m_title, m_year, a_name, d_name;"""
+            cur = _conn.cursor()
+            cur.execute(sql, (year, director, actor, role, genre, review, length, production, company,))
+            rows = cur.fetchall()
+            if len(rows) != 0:
+                print(l)
+                for row in rows:
+                        l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11])
                         print(l)
         # USED PRODUCTION AND DIRECTOR
         if len(production) != 0 and len(director) != 0:
@@ -641,7 +674,7 @@ def recommend(_conn):
                         and m_movieid = r_movieid
                     GROUP BY m_title;"""
             cur = _conn.cursor()
-            cur.execute(sql, (role,))
+            cur.execute(sql)
             rows = cur.fetchall()
             if len(rows) != 0:
                 print(l)
