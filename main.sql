@@ -238,32 +238,33 @@
 -- from director
 -- where d_dirid LIKE 'nm_________'
 -- --==TESTING INSERT FUNCTIONS=======================================================
--- SELECT * FROM movies WHERE m_title = "Malia";
--- SELECT * FROM movies WHERE m_title = "Jason";
+SELECT * FROM movies WHERE m_title = "Malia";
+SELECT * FROM movies WHERE m_title = "Jason";
+SELECT * FROM movies WHERE m_movieid = "tt1";
 
---     DELETE FROM movies WHERE m_title = "Malia";
+    DELETE FROM movies WHERE m_title = "Malia";
 
--- SELECT * FROM actor WHERE a_name =  "Malia B";
--- SELECT * FROM actor WHERE a_name =  "Jason Z";
---     DELETE FROM actor WHERE a_name =  "Malia B";
+SELECT * FROM actor WHERE a_name =  "Malia B";
+SELECT * FROM actor WHERE a_name =  "Jason Z";
+    DELETE FROM actor WHERE a_name =  "Malia B";
 
--- SELECT * FROM director WHERE d_name = "Malia B";
--- SELECT * FROM director WHERE d_name = "Jason Z";
---     DELETE FROM director WHERE d_name = "Malia B";
+SELECT * FROM director WHERE d_name = "Malia B";
+SELECT * FROM director WHERE d_name = "Jason Z";
+    DELETE FROM director WHERE d_name = "Malia B";
 
--- SELECT * FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
--- SELECT * FROM genre WHERE g_movieid = 'tt4';
---     DELETE FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
+SELECT * FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
+SELECT * FROM genre WHERE g_movieid = 'tt4';
+    DELETE FROM genre WHERE g_genre ='COM' and g_movieid = 'tt1';
 
--- SELECT * FROM review WHERE r_movieid = 'tt1';
--- SELECT * FROM review WHERE r_movieid = 'tt8';
+SELECT * FROM review WHERE r_movieid = 'tt1';
+SELECT * FROM review WHERE r_movieid = 'tt8';
 
---     DELETE FROM review WHERE r_movieid = 'tt1';
+    DELETE FROM review WHERE r_movieid = 'tt1';
 
--- SELECT * FROM company WHERE c_company LIKE 'Malia';
--- SELECT * FROM company WHERE c_company LIKE 'Jason';
+SELECT * FROM company WHERE c_company LIKE 'Malia';
+SELECT * FROM company WHERE c_company LIKE 'Jason';
 
---     DELETE FROM company WHERE c_company LIKE 'Malia';
+    DELETE FROM company WHERE c_company LIKE 'Malia';
 
 SELECT m_title, m_year, m_length, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent, p_type
                     from actor, movies, appears, company, director, genre, review, production

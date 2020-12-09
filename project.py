@@ -50,11 +50,10 @@ def search(_conn):
         movie = raw_input("\nWhat movie do you want to search for? The system will give you information about the movie. Enter the name: ")
         sql = """SELECT m_title, m_year, m_length, m_director, m_company
                 FROM movies
-                WHERE m_title LIKE ?"""
-        var = "%" + movie + "%"
-        args = [var]
+                WHERE m_title = ?"""
+        
         cur = _conn.cursor()
-        cur.execute(sql, args)
+        cur.execute(sql, (movie,))
         rows = cur.fetchall()
         
         if len(rows) == 0:
@@ -64,10 +63,10 @@ def search(_conn):
             l = ("Title | Year | Length | Director | Company of Movie")
             print(l)
             for row in rows:
-                l = (row[0], row[1], row[2], row[3], row[4])
-                print(l)
+                # l = (row[0], row[1], row[2], row[3], row[4])
+                # print(l)
                 # print('|'.join([str(r) for r in row]) + "\n")
-                # print('|'.join([str(r) for r in row]))
+                print('|'.join([str(r) for r in row]))
         year = raw_input("\nEnter the year of the movie you searched for to know more information about the film (There could be no additional information):")
         if len(year) == 0:
             exit() #This takes a bit of time to exit (for some reason)
