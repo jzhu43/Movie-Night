@@ -50,9 +50,11 @@ def search(_conn):
         movie = raw_input("\nWhat movie do you want to search for? The system will give you information about the movie. Enter the name: ")
         sql = """SELECT m_title, m_year, m_length, m_director, m_company
                 FROM movies
-                WHERE m_title = ?"""
+                WHERE m_title LIKE ?"""
+        var = "%" + movie + "%"
+        args = [var]
         cur = _conn.cursor()
-        cur.execute(sql, (movie,))
+        cur.execute(sql, args)
         rows = cur.fetchall()
         
         if len(rows) == 0:
@@ -62,11 +64,11 @@ def search(_conn):
             l = ("Title | Year | Length | Director | Company of Movie")
             print(l)
             for row in rows:
-                # l = (row[0], row[1], row[2], row[3], row[4])
-                # print(l)
+                l = (row[0], row[1], row[2], row[3], row[4])
+                print(l)
                 # print('|'.join([str(r) for r in row]) + "\n")
-                print('|'.join([str(r) for r in row]))
-        year = raw_input("\nEnter the year of the movie you searched for to know more information about the film:")
+                # print('|'.join([str(r) for r in row]))
+        year = raw_input("\nEnter the year of the movie you searched for to know more information about the film (There could be no additional information):")
         if len(year) == 0:
             exit() #This takes a bit of time to exit (for some reason)
         sql = """SELECT a_name, a_dob
@@ -78,10 +80,11 @@ def search(_conn):
         cur = _conn.cursor()
         cur.execute(sql, (movie, year,))
         rows = cur.fetchall()
-        l = ("Actor Name | Date of Birth:")
-        print(l)
-        for row in rows:
-                print('|'.join([str(r) for r in row]))
+        if len(rows) != 0:
+            l = ("Actor Name | Date of Birth:")
+            print(l)
+            for row in rows:
+                    print('|'.join([str(r) for r in row]))
 
         sql = """SELECT r_imdb, r_rottent
                 FROM review, movies
@@ -91,10 +94,11 @@ def search(_conn):
         cur = _conn.cursor()
         cur.execute(sql, (movie, year,))
         rows = cur.fetchall()
-        l = ("\nIMDB review | Rotten Tomato review:")
-        print(l)
-        for row in rows:
-                print('|'.join([str(r) for r in row]) + "\n")
+        if len(rows) != 0:
+            l = ("\nIMDB review | Rotten Tomato review:")
+            print(l)
+            for row in rows:
+                    print('|'.join([str(r) for r in row]) + "\n")
 
         sql = """SELECT g_genre
                 FROM genre, movies
@@ -129,14 +133,6 @@ def search(_conn):
         print("++++++++++++++++++++++++++++++++++")     
 ####### RECOMMEND FUNCTION ######################################################################################################################################
 def recommend(_conn):
-    #############################################################################
-    # when we demo:
-    #   actor: James Dean
-    #   genre: DRAMA
-    #   genre_2: ACTION
-    #   year: 2005
-    #   director: D.W. Griffith
-    #############################################################################
 
     try:
         print("To receive better recommendation results, provide the following information:")
@@ -155,26 +151,6 @@ def recommend(_conn):
         review = raw_input("The lowest review score (1-10) of the movie you would want: ")
         production = raw_input("The production of the movie: ")
         company = raw_input("The company of the movie: ")
-        
-        # if len(director) == 0:
-        #     print("Empty")
-        # if len(actor) == 0:
-        #     print("Empty")
-        # if len(role) == 0:
-        #     print("Empty")
-        # if len(year) == 0:
-        #     print("Empty")
-        # if len(length) == 0:
-        #     print("Empty")
-        # if len(genre) == 0:
-        #     print("Empty")
-        # if len(review) == 0:
-        #     print("Empty")
-        # if len(production) == 0:
-        #     print("Empty")
-        # if len(company) == 0:
-        #     print("Empty")
-        
 
         #USED GENRE
         if(len(genre) != 0 and (not director) and (not actor) and (not role) and (not year) and (not length) and (not genre_2) and (not review) and (not production) and (not company)):
@@ -565,7 +541,7 @@ def recommend(_conn):
         # USED YEAR & DIRECTOR & ACTOR & ROLE & GENRE & REVIEW
         if(len(genre) != 0 and len(director) != 0 and len(actor) != 0 and len(role) != 0 and len(year) != 0 and (not length) and (not genre_2) and len(review) != 0 and (not production) and (not company)):
             l = ("\nTitle | Year | Actor | Actor Date of Birth | Actor Role | Director | Movie Company | Genre | Review IMDB | Review Rotten Toamtoes ")
-            sql = """SELECT m_title, m_year, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent
+            sql = """SELECT DISTINCT m_title, m_year, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent
                     from actor, movies, appears, company, director, genre, review
                     where m_movieid = app_movieid
                         and app_actorid = a_actorid
@@ -590,14 +566,13 @@ def recommend(_conn):
                         l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
                         print(l)
         ##USED YEAR & DIRECTOR & ACTOR & ROLE & GENRE & REVIEW & LENGTH & PRODUCTION & COMPANY
-        if len(year) != 0 and len(director) != 0 and len(actor) != 0 and len(role) != 0 and len(genre) != 0 and len(review) != 0 and len(length) != 0 and len(production) != 0 and len(company) != 0 and (not genre_2):
-            l = ("\nTitle | Year | Movie Length | Actor | Actor Date of Birth | Actor Role | Director | Movie Company | Genre | Review IMDB | Review Rotten Toamtoes | Production")            
+        if len(year) != 0 and len(director) != 0 and len(actor) != 0 and len(role) != 0 and len(genre) != 0 and len(review) != 0 and len(length) != 0 and len(production) != 0 and len(company) != 0:
+            l = ("\nTitle | Year | Movie Length | Actor | Actor Date of Birth | Actor Role | Director | Movie Company | Genre | Review IMDB | Review Rotten Toamtoes | Production ")            
             sql = """SELECT m_title, m_year, m_length, a_name, a_dob, app_role, d_name, c_company, g_genre, r_imdb, r_rottent, p_type
-                    from actor, movies, appears, company, director, genre, review
+                    from actor, movies, appears, company, director, genre, review, production
                     where m_movieid = app_movieid
                         and app_actorid = a_actorid
                         and m_company = c_company
-                        and m_director = d_name
                         and m_movieid = g_movieid
                         and m_movieid = r_movieid
                         and p_dirid = d_dirid
@@ -644,8 +619,7 @@ def recommend(_conn):
                         print(l)
         # USED PRODUCTION & ACTOR & DIRECTOR
         if((not genre) and len(director) != 0 and len(actor) != 0 and (not role) and (not year) and (not length) and (not review) and len(production) != 0 and (not company)):
-            l = ("\n")
-            ######### ^ come back to this line later
+            l = ("\nTitle | Length | Year | Actor | Director | Production")
             sql = """select m_title, m_length, m_year, p_aname, p_dirname, p_type
                     from production, movies, actor, appears
                     where p_type LIKE ?
@@ -666,10 +640,23 @@ def recommend(_conn):
                 for row in rows:
                         l = (row[0], row[1], row[2], row[3], row[4], row[5])
                         print(l)
-        #Asks users if they w ant all info in Movie Night?
-        print("\nWould you like to view all of the information in Movie Night? (Yes: Enter 1 -or- No: Enter 2)")
+
+        print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
+        print("Would you like to view all of the movies in Movie Night? (Enter 0)")
         answer = input()
+        if answer == 4:
+            exit()    
         if answer == 1:
+            # print("YES")
+            search(_conn)
+        if answer == 2:
+            # print("YES")
+            recommend(_conn)
+        if answer == 3:
+            # print("YES")
+            modify(_conn)
+        if answer == 0:
+            l = ("\nTitle | Year | Actor | Actor Role | Actor Date of Birth | Company | Director | Genre | Review IMDB | Review Rotten Tomato")
             sql = """SELECT m_title, m_year, a_name, app_role, a_dob, c_company, d_name, g_genre, r_imdb, r_rottent
                     from actor, movies, appears, company, director, genre, review
                     where m_movieid = app_movieid
@@ -687,20 +674,6 @@ def recommend(_conn):
                 for row in rows:
                         l = (row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
                         print(l)
-
-        print("\nWould you like to search (Enter 1) -or- receive a recommendation again (Enter 2) -or- modify the movie system's information (Enter 3) -or- leave Movie Night (Enter 4)?:")
-        answer = input()
-        if answer == 4:
-            exit()    
-        if answer == 1:
-            # print("YES")
-            search(_conn)
-        if answer == 2:
-            # print("YES")
-            recommend(_conn)
-        if answer == 3:
-            # print("YES")
-            modify(_conn)
         
     except Error as e:        
         print(e)    
